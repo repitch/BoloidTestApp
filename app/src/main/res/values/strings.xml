@@ -7,7 +7,12 @@
     <string name="open_map">Open map</string>
     <string name="this_is_test">This is test boloid app</string>
     <string name="updating_task_from_server">Updating tasks from server</string>
-    <string name="text">Short description:</string>
-    <string name="long_desc">Long description:</string>
+    <string name="text">Short description</string>
+    <string name="long_desc">Long description</string>
+    <string name="prices">Prices</string>
+    <string name="update_tasks">Update tasks</string>
+    <string name="date">Date</string>
+    <string name="location_desc">Location description</string>
+    <string name="no_price">No price</string>
 
 </resources>

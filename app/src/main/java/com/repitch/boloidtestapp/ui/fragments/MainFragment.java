@@ -6,10 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.repitch.boloidtestapp.R;
-import com.repitch.boloidtestapp.activities.BaseActivity;
+import com.repitch.boloidtestapp.ui.activities.BaseActivity;
 
 /**
  * Created by repitch on 01.09.15.

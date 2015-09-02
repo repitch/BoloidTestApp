@@ -11,11 +11,23 @@
         android:apiKey="b2o157EotI1QKQbgtAi~xkJ-19yyP0V1EsLGIDUTOxGNAnhxhKnO3blHycZwmS~fqL-j0gZkIbadJQQld1mQyEqMZocpSk5TKeXZyDJIhTU="/>
 
     <LinearLayout
+        android:id="@+id/updateTasksWrap"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnUpdateTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_tasks"/>
+        </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/dataLoadingWrap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@drawable/back">
+        android:background="@drawable/back"
+        android:visibility="invisible">
 
         <TextView
             android:layout_width="wrap_content"

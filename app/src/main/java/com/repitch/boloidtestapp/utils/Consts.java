@@ -5,4 +5,6 @@ package com.repitch.boloidtestapp.utils;
  */
 public final class Consts {
     public final static String JSON_TASKS_URL = "http://test.boloid.com:9000/tasks";
+
+    public final static String DATE_FORMAT = "dd/MM/yyyy";
 }

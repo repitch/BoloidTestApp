@@ -13,6 +13,23 @@ public class Price implements Serializable {
     private static final String DESCRIPTION_NAME = "description";
 
     private int mPrice;
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public void setDescription(String description) {
+        mDescription = description;
+    }
+
+    public int getPrice() {
+        return mPrice;
+    }
+
+    public void setPrice(int price) {
+        mPrice = price;
+    }
+
     private String mDescription;
 
     // From JSON

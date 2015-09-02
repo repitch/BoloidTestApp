@@ -1,24 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
-    <TextView
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/back">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/text"/>
-    <TextView
-        android:id="@+id/txtText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/long_desc"/>
-    <TextView
-        android:id="@+id/txtLongText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Label"
+            android:text="@string/text"/>
+
+        <TextView
+            android:id="@+id/txtText"
+            style="@style/Text"/>
+
+        <TextView
+            style="@style/Label"
+            android:text="@string/long_desc"/>
+
+        <TextView
+            android:id="@+id/txtLongText"
+            style="@style/Text"/>
+
+        <TextView
+            style="@style/Label"
+            android:text="@string/prices"/>
+
+        <LinearLayout
+            android:id="@+id/llPricesWrap"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                style="@style/Text"
+                android:gravity="center_horizontal"
+                android:text="@string/no_price"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:text="@string/date"
+            style="@style/Label"/>
+
+        <TextView
+            android:id="@+id/txtDate"
+            style="@style/Text"/>
+
+        <TextView
+            android:text="@string/location_desc"
+            style="@style/Label"/>
+
+        <TextView
+            android:id="@+id/txtLocationDesc"
+            style="@style/Text"/>
 
 
-</LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

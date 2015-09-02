@@ -22,6 +22,10 @@ public class TasksManager {
         mTasks = tasks;
     }
 
+    public void clearTasks() {
+        mTasks = new ArrayList<>();
+    }
+
     public static synchronized TasksManager getInstance() {
         if (sInstance == null) {
             sInstance = new TasksManager();

@@ -1,4 +1,4 @@
-package com.repitch.boloidtestapp.activities;
+package com.repitch.boloidtestapp.ui.activities;
 
 import android.os.Bundle;
 

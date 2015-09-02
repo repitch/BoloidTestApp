@@ -9,7 +9,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.repitch.boloidtestapp.R;
 
-import com.repitch.boloidtestapp.activities.BaseActivity;
+import com.repitch.boloidtestapp.ui.activities.BaseActivity;
 
 
 public abstract class BaseFragment extends Fragment {

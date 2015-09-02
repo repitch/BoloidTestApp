@@ -1,14 +1,13 @@
 package com.repitch.boloidtestapp.models;
 
-import android.app.Activity;
 import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 import android.view.View;
 
 import com.repitch.boloidtestapp.R;
-import com.repitch.boloidtestapp.activities.BaseActivity;
+import com.repitch.boloidtestapp.ui.activities.BaseActivity;
 import com.repitch.boloidtestapp.ui.fragments.TaskDetailFragment;
+import com.repitch.boloidtestapp.utils.Consts;
 import com.repitch.boloidtestapp.utils.TasksManager;
 
 import org.json.JSONArray;
@@ -16,6 +15,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import ru.yandex.yandexmapkit.MapController;
 import ru.yandex.yandexmapkit.MapView;
@@ -44,14 +46,45 @@ public class Task implements Serializable {
     private static final String PRICES_NAME = "prices";
     private static final String TRANSLATION_NAME = "translation";
 
-    private int mID;
+    public int getID() {
+        return mID;
+    }
+
+    public long getDate() {
+        return mDate;
+    }
+
+    public String getDateStr(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(mDate);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Consts.DATE_FORMAT);
+        String date = dateFormat.format(calendar.getTime());
+        return date;
+    }
+
+    public String getDurationLimitText() {
+        return mDurationLimitText;
+    }
+
+    public int getPrice() {
+        return mPrice;
+    }
+
+    public String getLocationText() {
+        return mLocationText;
+    }
+
+    public int getZoomLevel() {
+        return mZoomLevel;
+    }
+
+    public boolean isTranslation() {
+        return mTranslation;
+    }
 
     public String getTitle() {
         return mTitle;
     }
-
-    private String mTitle;
-    private int mDate;
 
     public String getText() {
         return mText;
@@ -61,31 +94,39 @@ public class Task implements Serializable {
         return mLongText;
     }
 
+    public GeoPoint getLocation() {
+        return mLocation;
+    }
+
+    public ArrayList<Price> getPrices() {
+        return mPrices;
+    }
+
+    private int mID;
+
+    private String mTitle;
+    private long mDate;
     private String mText;
     private String mLongText;
     private String mDurationLimitText;
     private int mPrice;
     private String mLocationText;
 
-    public GeoPoint getLocation() {
-        return mLocation;
-    }
-
     private GeoPoint mLocation;
     private int mZoomLevel;
-    private Price[] mPrices;
+    private ArrayList<Price> mPrices;
     private boolean mTranslation;
 
     @Override
     public String toString() {
-        String str = "Task ("+mID+"): "+mTitle;
+        String str = "Task (" + mID + "): " + mTitle;
         return str;
     }
 
     public Task(JSONObject jsonTask) throws JSONException {
         mID = jsonTask.getInt(ID_NAME);
         mTitle = jsonTask.getString(TITLE_NAME);
-        mDate = jsonTask.getInt(DATE_NAME);
+        mDate = jsonTask.getLong(DATE_NAME);
         mText = jsonTask.getString(TEXT_NAME);
         mLongText = jsonTask.getString(LONGTEXT_NAME);
         mDurationLimitText = jsonTask.getString(DURATIONLIMIT_NAME);
@@ -99,26 +140,18 @@ public class Task implements Serializable {
         mZoomLevel = jsonTask.getInt(ZOOMLEVEL_NAME);
 
         JSONArray jsonPrices = jsonTask.getJSONArray(PRICES_NAME);
-        mPrices = new Price[jsonPrices.length()];
-        for (int i=0; i<jsonPrices.length(); i++){
+        mPrices = new ArrayList<>();
+        for (int i = 0; i < jsonPrices.length(); i++) {
             JSONObject jsonPrice = jsonPrices.getJSONObject(i);
             Price price = new Price(jsonPrice);
-            mPrices[i] = price;
+            mPrices.add(price);
         }
         mTranslation = jsonTask.getBoolean(TRANSLATION_NAME);
     }
 
-    public void setOnMap(final Context context, MapView mapView){
-        // Получаем объект MapController
-        MapController mapController = mapView.getMapController();
-
-        // получаем объект overlaymanager
-        OverlayManager testOverlayManager = mapController.getOverlayManager();
-        // новый слой
-        Overlay testOverlay = new Overlay(mapController);
+    public void setOnMap(final Context context, Overlay testOverlay) {
         OverlayItem testOverlayItem = new OverlayItem(mLocation, context.getResources().getDrawable(R.drawable.geopoint));
         testOverlay.addOverlayItem(testOverlayItem);
-        testOverlayManager.addOverlay(testOverlay);
 
         // тестовый балун
         BalloonItem testBalloon = new BalloonItem(context, mLocation);
@@ -131,8 +164,8 @@ public class Task implements Serializable {
                 // открыть детальное описание задания
                 GeoPoint gp = balloonItem.getGeoPoint();
                 Task curTask = null;
-                for (Task task: TasksManager.getInstance().getTasks()){
-                    if (task.getLocation().equals(gp)){
+                for (Task task : TasksManager.getInstance().getTasks()) {
+                    if (task.getLocation().equals(gp)) {
                         Log.i("TASK", "Clicked on balloon. " + task.toString());
                         curTask = task;
                         break;

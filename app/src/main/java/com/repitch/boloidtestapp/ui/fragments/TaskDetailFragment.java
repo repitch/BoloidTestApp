@@ -8,8 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.repitch.boloidtestapp.R;
-import com.repitch.boloidtestapp.activities.BaseActivity;
+import com.repitch.boloidtestapp.models.Price;
+import com.repitch.boloidtestapp.ui.activities.BaseActivity;
 import com.repitch.boloidtestapp.models.Task;
+import com.repitch.boloidtestapp.utils.Consts;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by repitch on 02.09.15.
@@ -35,6 +41,9 @@ public class TaskDetailFragment extends BaseFragment{
 
     private TextView mTxtText;
     private TextView mTxtLongText;
+    private ViewGroup mLlPricesWrap;
+    private TextView mTxtDate;
+    private TextView mTxtLocationDesc;
 
     private Task mTask;
 
@@ -49,9 +58,33 @@ public class TaskDetailFragment extends BaseFragment{
         // init UI
         mTxtText = (TextView) rootView.findViewById(R.id.txtText);
         mTxtLongText = (TextView) rootView.findViewById(R.id.txtLongText);
+        mLlPricesWrap = (ViewGroup) rootView.findViewById(R.id.llPricesWrap);
+        mTxtDate = (TextView) rootView.findViewById(R.id.txtDate);
+        mTxtLocationDesc = (TextView) rootView.findViewById(R.id.txtLocationDesc);
+
 
         mTxtText.setText(mTask.getText());
         mTxtLongText.setText(mTask.getLongText());
+        // добавим цены
+        if (mTask.getPrices().size()>0){
+            // убираю placeholder
+            mLlPricesWrap.removeAllViews();
+        }
+        for (Price price: mTask.getPrices()){
+            ViewGroup priceView = (ViewGroup) LayoutInflater.from(mActivity).inflate(R.layout.item_price, mLlPricesWrap, false);
+            TextView txtPrice = (TextView) priceView.findViewById(R.id.txtPrice);
+            TextView txtDesc = (TextView) priceView.findViewById(R.id.txtDesc);
+
+            txtPrice.setText(""+price.getPrice());
+            txtDesc.setText(""+price.getDescription());
+
+            mLlPricesWrap.addView(priceView);
+        }
+        // установим дату
+        mTxtDate.setText(mTask.getDateStr());
+
+        // установим описание положения
+        mTxtLocationDesc.setText(mTask.getLocationText());
 
         return rootView;
     }

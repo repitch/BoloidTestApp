@@ -1,7 +1,7 @@
 package com.repitch.boloidtestapp.ui.fragments;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.repitch.boloidtestapp.R;
-import com.repitch.boloidtestapp.activities.BaseActivity;
 import com.repitch.boloidtestapp.models.Task;
 import com.repitch.boloidtestapp.utils.JSONTasksManager;
 import com.repitch.boloidtestapp.utils.TasksManager;
@@ -30,6 +29,7 @@ import ru.yandex.yandexmapkit.utils.GeoPoint;
  */
 public class MapFragment extends BaseFragment {
     private LinearLayout mDataLoadingWrap;
+    private Button mBtnUpdateTasks;
     private MapView mMapView;
 
     private GeoPoint testGeoPoint = new GeoPoint(12.02, 14.98);
@@ -44,24 +44,52 @@ public class MapFragment extends BaseFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        // ** Работа с MAPS
+        // Получаем объект MapController
+        MapController mapController = mMapView.getMapController();
+        // получаем объект overlaymanager
+        OverlayManager testOverlayManager = mapController.getOverlayManager();
+        // слой
+        mPointsOverlay = new Overlay(mapController);
+        testOverlayManager.addOverlay(mPointsOverlay);
+        // покажем имеющиеся объекты
+        ArrayList<Task> tasks = TasksManager.getInstance().getTasks();
+        if (tasks != null && tasks.size() > 0) {
+            showPoints();
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
 
         // init UI
         mMapView = (MapView) rootView.findViewById(R.id.map);
         mDataLoadingWrap = (LinearLayout) rootView.findViewById(R.id.dataLoadingWrap);
+        mBtnUpdateTasks = (Button) rootView.findViewById(R.id.btnUpdateTasks);
+
+        mBtnUpdateTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDataLoadingWrap.setVisibility(View.VISIBLE);
+
+                ArrayList<Task> oldTasks = TasksManager.getInstance().getTasks();
+                TasksManager.getInstance().clearTasks();
+                JSONTasksManager jtMngr = new JSONTasksManager();
+                jtMngr.parseTasks(new JSONTasksManager.OnParseCompleted() {
+                    @Override
+                    public void onParseCompleted() {
+                        showPoints();
+                    }
+                });
+            }
+        });
 
         // проверим, есть ли задания в менеджере
         ArrayList<Task> tasks = TasksManager.getInstance().getTasks();
-        if (tasks==null || tasks.size()==0){
-            JSONTasksManager jtMngr = new JSONTasksManager();
-            jtMngr.parseTasks(new JSONTasksManager.OnParseCompleted() {
-                @Override
-                public void onParseCompleted() {
-                    showPoints();
-                }
-            });
-        } else {
+        if (tasks != null && tasks.size() > 0) {
             // сфокусируемся на первом задании
             showPoints();
         }
@@ -72,7 +100,7 @@ public class MapFragment extends BaseFragment {
     private void showPoints() {
         // прячем хеадер загрузки
         mDataLoadingWrap.setVisibility(View.INVISIBLE);
-        Toast.makeText(mActivity, "Tasks uploaded from server!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(mActivity, "Tasks loaded!", Toast.LENGTH_SHORT).show();
 
         // отметим все новые точки на карте
         setTaskPoints();
@@ -84,7 +112,7 @@ public class MapFragment extends BaseFragment {
     // из списка заданий фокусируется на первом
     private void showFirstTask() {
         ArrayList<Task> tasks = TasksManager.getInstance().getTasks();
-        if (tasks.size()==0){
+        if (tasks.size() == 0) {
             Toast.makeText(mActivity, "There is no task:(", Toast.LENGTH_LONG).show();
         } else {
             Task task0 = tasks.get(0);
@@ -95,15 +123,31 @@ public class MapFragment extends BaseFragment {
         }
     }
 
+    private Overlay mPointsOverlay;
+
     // Расставляет только обновленные задания по карте
     private void setTaskPoints() {
+        // удаляем все с карты либо создаем первый слой
+        if (mPointsOverlay == null) {
+            Log.i("TASKS", "mPointsOverlay==null");
+            MapController mapController = mMapView.getMapController();
+            OverlayManager testOverlayManager = mapController.getOverlayManager();
+            mPointsOverlay = new Overlay(mapController);
+            testOverlayManager.addOverlay(mPointsOverlay);
+
+        } else {
+            Log.i("TASKS", "mPointsOverlay!=null");
+            Log.i("TASKS", "mPointSOverlay size=" + mPointsOverlay.getOverlayItems().size());
+            mPointsOverlay.clearOverlayItems();
+            Log.i("TASKS", "mPointSOverlay size=" + mPointsOverlay.getOverlayItems().size());
+            Log.i("TASKS", mPointsOverlay.getMapController().toString());
+        }
+
         ArrayList<Task> tasks = TasksManager.getInstance().getTasks();
-        for (Task task: tasks){
-            task.setOnMap(mActivity, mMapView);
+        for (Task task : tasks) {
+            task.setOnMap(mActivity, mPointsOverlay);
         }
     }
-
-
 
     private void testBalloons(View rootView) {
         // Получаем объект MapController
